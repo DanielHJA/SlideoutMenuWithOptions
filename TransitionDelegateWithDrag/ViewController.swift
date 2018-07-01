@@ -11,7 +11,7 @@ import UIKit
 class ViewController: UIViewController {
 
     var transitionManager: TransitionManager = {
-        return TransitionManager(height: 400, duration: 2.0, tapToDismiss: true, presentingDirection: .top, dismissingDirection: .top)
+        return TransitionManager(percentage: 0.8, duration: 2.0, tapToDismiss: true, direction: .top, backgroundStyle: .blurred)
     }()
     
     private lazy var button: UIButton = {
@@ -25,7 +25,10 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(button)
+        let imageView = UIImageView(image: #imageLiteral(resourceName: "becky"))
+        imageView.frame = view.bounds
+        view.addSubview(imageView)
+        view.insertSubview(button, aboveSubview: imageView)
     }
     
     @objc private func presentModally(_ sender: UIButton) {
