@@ -14,6 +14,14 @@ class ViewController: UIViewController {
         return TransitionManager(percentage: 0.8, duration: 2.0, tapToDismiss: true, direction: .top, backgroundStyle: .blurred)
     }()
     
+    var menuTransitionManager: TransitionManager = {
+        return TransitionManager(percentage: 0.6, duration: 0.5, tapToDismiss: true, direction: .left, backgroundStyle: .dimmed)
+    }()
+    
+    private lazy var leftBarButtonItem: UIBarButtonItem = {
+        return UIBarButtonItem(title: "Menu", style: .plain, target: self, action: #selector(presentMenu(_:)))
+    }()
+    
     private lazy var button: UIButton = {
         let temp = UIButton(frame: CGRect(x: 0, y: 0, width: 50.0, height: 30.0))
         temp.setTitle("Modal", for: .normal)
@@ -28,12 +36,20 @@ class ViewController: UIViewController {
         let imageView = UIImageView(image: #imageLiteral(resourceName: "becky"))
         imageView.frame = view.bounds
         view.addSubview(imageView)
-        view.insertSubview(button, aboveSubview: imageView)
+       // view.insertSubview(button, aboveSubview: imageView)
+        navigationItem.leftBarButtonItem = leftBarButtonItem
     }
     
     @objc private func presentModally(_ sender: UIButton) {
         let vc = ModalViewController()
         vc.transitioningDelegate = transitionManager
+        vc.modalPresentationStyle = .custom
+        present(vc, animated: true, completion: nil)
+    }
+    
+    @objc private func presentMenu(_ sender: UIBarButtonItem) {
+        let vc = MenuViewController()
+        vc.transitioningDelegate = menuTransitionManager
         vc.modalPresentationStyle = .custom
         present(vc, animated: true, completion: nil)
     }

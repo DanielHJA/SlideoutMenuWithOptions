@@ -21,7 +21,7 @@ enum PresentationStatus {
 }
 
 enum BackgroundStyle {
-    case dimmed, blurred
+    case dimmed, blurred, none
 }
 
 class TransitionManager: NSObject, UIViewControllerTransitioningDelegate {
@@ -31,6 +31,8 @@ class TransitionManager: NSObject, UIViewControllerTransitioningDelegate {
     var tapToDismiss: Bool
     var direction: Direction
     var backgroundStyle: BackgroundStyle
+    //
+    var presentationController: PresentationController!
     
     init(percentage: CGFloat, duration: Double, tapToDismiss: Bool, direction: Direction, backgroundStyle: BackgroundStyle) {
         self.percentage = percentage
@@ -49,7 +51,8 @@ class TransitionManager: NSObject, UIViewControllerTransitioningDelegate {
     }
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        return PresentationController(presentedViewController: presented, presenting: presenting, percentage: percentage, tapToDismiss: tapToDismiss, direction: direction, backgroundStyle: backgroundStyle)
+        presentationController = PresentationController(presentedViewController: presented, presenting: presenting, percentage: percentage, tapToDismiss: tapToDismiss, direction: direction, backgroundStyle: backgroundStyle)
+        return presentationController
     }
     
 }
