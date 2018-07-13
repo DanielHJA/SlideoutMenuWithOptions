@@ -16,6 +16,11 @@
 		7B10E3DC20E811BE000262AF /* TransitionDelegateWithDragUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B10E3DB20E811BE000262AF /* TransitionDelegateWithDragUITests.swift */; };
 		7B10E3EA20E811CB000262AF /* TransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B10E3E920E811CB000262AF /* TransitionManager.swift */; };
 		7B10E3EC20E81206000262AF /* ModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B10E3EB20E81206000262AF /* ModalViewController.swift */; };
+		7B1ACBA720E9A07800CC8C03 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1ACBA620E9A07800CC8C03 /* MenuViewController.swift */; };
+		7B1ACBA920E9A1EE00CC8C03 /* MenuTableviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1ACBA820E9A1EE00CC8C03 /* MenuTableviewCell.swift */; };
+		7B1ACBAB20E9A4F200CC8C03 /* MenuModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1ACBAA20E9A4F200CC8C03 /* MenuModel.swift */; };
+		7B1ACBAD20E9AA2700CC8C03 /* OneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1ACBAC20E9AA2700CC8C03 /* OneViewController.swift */; };
+		7B1ACBAF20E9AA3200CC8C03 /* TwoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1ACBAE20E9AA3200CC8C03 /* TwoViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +56,11 @@
 		7B10E3DD20E811BE000262AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7B10E3E920E811CB000262AF /* TransitionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransitionManager.swift; sourceTree = "<group>"; };
 		7B10E3EB20E81206000262AF /* ModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalViewController.swift; sourceTree = "<group>"; };
+		7B1ACBA620E9A07800CC8C03 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		7B1ACBA820E9A1EE00CC8C03 /* MenuTableviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuTableviewCell.swift; sourceTree = "<group>"; };
+		7B1ACBAA20E9A4F200CC8C03 /* MenuModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuModel.swift; sourceTree = "<group>"; };
+		7B1ACBAC20E9AA2700CC8C03 /* OneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneViewController.swift; sourceTree = "<group>"; };
+		7B1ACBAE20E9AA3200CC8C03 /* TwoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +115,11 @@
 				7B10E3BD20E811BE000262AF /* ViewController.swift */,
 				7B10E3E920E811CB000262AF /* TransitionManager.swift */,
 				7B10E3EB20E81206000262AF /* ModalViewController.swift */,
+				7B1ACBA620E9A07800CC8C03 /* MenuViewController.swift */,
+				7B1ACBAA20E9A4F200CC8C03 /* MenuModel.swift */,
+				7B1ACBAC20E9AA2700CC8C03 /* OneViewController.swift */,
+				7B1ACBAE20E9AA3200CC8C03 /* TwoViewController.swift */,
+				7B1ACBA820E9A1EE00CC8C03 /* MenuTableviewCell.swift */,
 				7B10E3BF20E811BE000262AF /* Main.storyboard */,
 				7B10E3C220E811BE000262AF /* Assets.xcassets */,
 				7B10E3C420E811BE000262AF /* LaunchScreen.storyboard */,
@@ -265,7 +280,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B1ACBA920E9A1EE00CC8C03 /* MenuTableviewCell.swift in Sources */,
 				7B10E3EC20E81206000262AF /* ModalViewController.swift in Sources */,
+				7B1ACBAF20E9AA3200CC8C03 /* TwoViewController.swift in Sources */,
+				7B1ACBA720E9A07800CC8C03 /* MenuViewController.swift in Sources */,
+				7B1ACBAD20E9AA2700CC8C03 /* OneViewController.swift in Sources */,
+				7B1ACBAB20E9A4F200CC8C03 /* MenuModel.swift in Sources */,
 				7B10E3EA20E811CB000262AF /* TransitionManager.swift in Sources */,
 				7B10E3BE20E811BE000262AF /* ViewController.swift in Sources */,
 				7B10E3BC20E811BE000262AF /* AppDelegate.swift in Sources */,

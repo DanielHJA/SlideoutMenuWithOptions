@@ -11,26 +11,35 @@ import UIKit
 class ViewController: UIViewController {
 
     var transitionManager: TransitionManager = {
-        return TransitionManager(height: 400, duration: 2.0, tapToDismiss: true, presentingDirection: .top, dismissingDirection: .top)
+        return TransitionManager(percentage: 0.8, duration: 2.0, tapToDismiss: true, direction: .top, backgroundStyle: .blurred, shouldMinimizeBackGround: true, pushesBackground: false)
     }()
     
-    private lazy var button: UIButton = {
-        let temp = UIButton(frame: CGRect(x: 0, y: 0, width: 50.0, height: 30.0))
-        temp.setTitle("Modal", for: .normal)
-        temp.center = view.center
-        temp.backgroundColor = UIColor.blue
-        temp.addTarget(self, action: #selector(presentModally(_:)), for: .touchUpInside)
-        return temp
+    var menuTransitionManager: TransitionManager = {
+        return TransitionManager(percentage: 0.6, duration: 0.5, tapToDismiss: true, direction: .left, backgroundStyle: .none, shouldMinimizeBackGround: false, pushesBackground: true)
+    }()
+    
+    private lazy var leftBarButtonItem: UIBarButtonItem = {
+        return UIBarButtonItem(title: "Menu", style: .plain, target: self, action: #selector(presentMenu(_:)))
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(button)
+        let imageView = UIImageView(image: #imageLiteral(resourceName: "becky"))
+        imageView.frame = view.bounds
+        view.addSubview(imageView)
+        navigationItem.leftBarButtonItem = leftBarButtonItem
     }
     
     @objc private func presentModally(_ sender: UIButton) {
         let vc = ModalViewController()
         vc.transitioningDelegate = transitionManager
+        vc.modalPresentationStyle = .custom
+        present(vc, animated: true, completion: nil)
+    }
+    
+    @objc private func presentMenu(_ sender: UIBarButtonItem) {
+        let vc = MenuViewController()
+        vc.transitioningDelegate = menuTransitionManager
         vc.modalPresentationStyle = .custom
         present(vc, animated: true, completion: nil)
     }
