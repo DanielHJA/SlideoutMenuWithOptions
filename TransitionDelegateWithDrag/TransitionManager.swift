@@ -31,23 +31,26 @@ class TransitionManager: NSObject, UIViewControllerTransitioningDelegate {
     var tapToDismiss: Bool
     var direction: Direction
     var backgroundStyle: BackgroundStyle
-    //
+    var shouldMinimizeBackGround: Bool
+    var pushesBackground: Bool
     var presentationController: PresentationController!
     
-    init(percentage: CGFloat, duration: Double, tapToDismiss: Bool, direction: Direction, backgroundStyle: BackgroundStyle) {
+    init(percentage: CGFloat, duration: Double, tapToDismiss: Bool, direction: Direction, backgroundStyle: BackgroundStyle, shouldMinimizeBackGround: Bool, pushesBackground: Bool) {
         self.percentage = percentage
         self.duration = duration
         self.tapToDismiss = tapToDismiss
         self.direction = direction
         self.backgroundStyle = backgroundStyle
+        self.shouldMinimizeBackGround = shouldMinimizeBackGround
+        self.pushesBackground = pushesBackground
     }
     
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return TransitionAnimation(percentage: percentage, transition: .present, duration: duration, direction: direction)
+        return TransitionAnimation(percentage: percentage, transition: .present, duration: duration, direction: direction, shouldMinimizeBackGround: shouldMinimizeBackGround, pushesBackground: pushesBackground)
     }
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return TransitionAnimation(percentage: percentage, transition: .dismiss, duration: duration, direction: direction)
+        return TransitionAnimation(percentage: percentage, transition: .dismiss, duration: duration, direction: direction, shouldMinimizeBackGround: shouldMinimizeBackGround, pushesBackground: pushesBackground)
     }
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
@@ -81,6 +84,12 @@ class PresentationController: UIPresentationController {
         return temp
     }()
     
+    let clearView: UIView? = {
+        let temp = UIView()
+        temp.backgroundColor = UIColor.clear
+        return temp
+    }()
+    
     let blurView: UIVisualEffectView? = {
         let effect = UIBlurEffect(style: .regular)
         let temp = UIVisualEffectView(effect: effect)
@@ -97,10 +106,13 @@ class PresentationController: UIPresentationController {
         presentedViewController.view.addGestureRecognizer(panGesture)
         
         if tapToDismiss {
-            if backgroundStyle == .dimmed {
+            switch backgroundStyle {
+            case .dimmed:
                 dimmView?.addGestureRecognizer(tapRecognizer)
-            } else {
+            case .blurred:
                 blurView?.addGestureRecognizer(tapRecognizer)
+            case .none:
+                clearView?.addGestureRecognizer(tapRecognizer)
             }
         }
     }
@@ -187,7 +199,6 @@ class PresentationController: UIPresentationController {
     private func setAlpha(_ alpha: CGFloat) {
         dimmView?.alpha = alpha
         blurView?.alpha = alpha
-
     }
     
     override func containerViewWillLayoutSubviews() {
@@ -205,17 +216,21 @@ class PresentationController: UIPresentationController {
     }
     
     override func presentationTransitionWillBegin() {
-
-        if backgroundStyle == .dimmed {
+        
+        switch backgroundStyle {
+        case .dimmed:
             dimmView?.frame = self.containerView!.bounds
             dimmView?.alpha = 0
             containerView?.insertSubview(dimmView!, at: 0)
-        } else {
+        case .blurred:
             blurView?.frame = self.containerView!.bounds
             blurView?.alpha = 0
             containerView?.insertSubview(blurView!, at: 0)
+        case .none:
+            clearView?.frame = self.containerView!.bounds
+            containerView?.insertSubview(clearView!, at: 0)
         }
-        
+
         let transitionCoordinator = presentingViewController.transitionCoordinator
         transitionCoordinator?.animate(alongsideTransition: {[weak self] (_) -> Void in
             self?.setAlpha((self?.dimViewAlphaMax)!)
@@ -241,12 +256,16 @@ class TransitionAnimation: NSObject, UIViewControllerAnimatedTransitioning {
     var duration: Double
     var transition: PresentationStatus
     var direction: Direction
+    var shouldMinimizeBackGround: Bool
+    var pushesBackground: Bool
     
-    init(percentage: CGFloat, transition: PresentationStatus, duration: Double, direction: Direction) {
+    init(percentage: CGFloat, transition: PresentationStatus, duration: Double, direction: Direction, shouldMinimizeBackGround: Bool, pushesBackground: Bool) {
         self.percentage = percentage
         self.transition = transition
         self.duration = duration
         self.direction = direction
+        self.shouldMinimizeBackGround = shouldMinimizeBackGround
+        self.pushesBackground = pushesBackground
     }
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -261,54 +280,88 @@ class TransitionAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         
         switch transition {
         case .present:
-            
             container.addSubview(toView)
             container.clipsToBounds = true
             toView.layer.masksToBounds = true
-            
             animateIn(container: container, fromView: fromView, toView: toView, transitionContext: transitionContext)
- 
         case .dismiss:
-            
             animateOut(container: container, fromView: fromView, toView: toView, transitionContext: transitionContext)
         }
     }
     
-    private func animateOut(container: UIView, fromView: UIView, toView: UIView, transitionContext: UIViewControllerContextTransitioning) {
-        UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut, animations: { [unowned self] in
-          
-                switch self.direction {
-                case .top:
-                    fromView.frame.origin.y = -(container.frame.height * self.percentage)
-                case .bottom:
-                    fromView.frame.origin.y = fromView.bounds.height + (toView.frame.height - (container.frame.height * self.percentage))
-                case .left:
-                    fromView.frame.origin.x -= toView.frame.width
-                case .right:
-                    fromView.frame.origin.x += toView.frame.width
-                }
-            
-            }, completion: { (completion) in
-                transitionContext.completeTransition(!(transitionContext.transitionWasCancelled))
-            })
-        }
-    
     private func animateIn(container: UIView, fromView: UIView, toView: UIView, transitionContext: UIViewControllerContextTransitioning) {
+        toView.layoutIfNeeded()
         UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut, animations: { [unowned self] in
             
             switch self.direction {
             case .top:
                 toView.frame.origin.y += container.frame.height * self.percentage
+                if self.pushesBackground {
+                    fromView.frame.origin.y = container.frame.height * self.percentage
+                }
             case .bottom:
                 toView.frame.origin.y -= container.frame.height * self.percentage
+                if self.pushesBackground {
+                    fromView.frame.origin.y = -container.frame.height * self.percentage
+                }
             case .left:
                 toView.frame.origin.x += container.frame.width * self.percentage
+                if self.pushesBackground {
+                    fromView.frame.origin.x = container.frame.width * self.percentage
+                }
             case .right:
                 toView.frame.origin.x -= toView.frame.width * self.percentage
+                if self.pushesBackground {
+                    fromView.frame.origin.x = container.frame.width * self.percentage
+                }
+            }
+
+            if self.shouldMinimizeBackGround {
+                fromView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+                (transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from) as? UINavigationController)?.setNavigationBarHidden(true, animated: false)
             }
             
             }, completion: { (completion) in
                 transitionContext.completeTransition(!(transitionContext.transitionWasCancelled))
+                toView.layoutIfNeeded()
         })
     }
+    
+    private func animateOut(container: UIView, fromView: UIView, toView: UIView, transitionContext: UIViewControllerContextTransitioning) {
+        fromView.layoutIfNeeded()
+        UIView.animate(withDuration: duration, delay: 0, options: .curveEaseInOut, animations: { [unowned self] in
+          
+                switch self.direction {
+                case .top:
+                    fromView.frame.origin.y = -(container.frame.height * self.percentage)
+                    if self.pushesBackground {
+                        toView.frame.origin.y = 0
+                    }
+                case .bottom:
+                    fromView.frame.origin.y = fromView.bounds.height + (toView.frame.height - (container.frame.height * self.percentage))
+                    if self.pushesBackground {
+                        toView.frame.origin.y = 0
+                    }
+                case .left:
+                    fromView.frame.origin.x -= toView.frame.width
+                    if self.pushesBackground {
+                        toView.frame.origin.x = 0
+                    }
+                case .right:
+                    fromView.frame.origin.x += toView.frame.width
+                    if self.pushesBackground {
+                        toView.frame.origin.x = 0
+                    }
+                }
+            
+            if self.shouldMinimizeBackGround {
+                toView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                (transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to) as? UINavigationController)?.setNavigationBarHidden(false, animated: false)
+            }
+
+            }, completion: { (completion) in
+                transitionContext.completeTransition(!(transitionContext.transitionWasCancelled))
+                fromView.layoutIfNeeded()
+            })
+        }
 }
